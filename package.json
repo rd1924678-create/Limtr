@@ -1,5 +1,5 @@
 {
-  "name": "limtr",
+  "name": "@rajatdebnath/limtr",
   "version": "1.0.0",
   "description": "An ultra-fast, extensible, framework-agnostic rate limiting engine for Node.js.",
   "keywords": [
