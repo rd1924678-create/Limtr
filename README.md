@@ -1,6 +1,6 @@
 # Limtr 🚀
 
-[![NPM Version](https://img.shields.io/npm/v/limtr.svg)](https://www.npmjs.com/package/limtr)
+[![NPM Version](https://img.shields.io/npm/v/@rajatdebnath/limtr.svg)](https://www.npmjs.com/package/@rajatdebnath/limtr)
 [![CI Status](https://github.com/rd1924678-create/Limtr/actions/workflows/ci.yml/badge.svg)](https://github.com/rd1924678-create/Limtr/actions)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
@@ -13,7 +13,7 @@ Built for modern enterprise systems, `Limtr` provides flawless atomic race-condi
 ## 📦 Installation
 
 ```bash
-npm install limtr
+npm install @rajatdebnath/limtr
 ```
 
 If you plan to use the Redis Store for distributed environments, you will also need to install the official `redis` client:
@@ -29,7 +29,7 @@ Limtr is totally framework-agnostic, but comes with a lightning-fast Express.js 
 
 ```javascript
 import express from 'express';
-import { expressRateLimit } from 'limtr';
+import { expressRateLimit } from '@rajatdebnath/limtr';
 
 const app = express();
 
@@ -73,7 +73,7 @@ Limtr exposes an incredibly powerful configuration object.
 ### Built-in Presets
 Don't want to configure everything manually? Limtr exports production-ready presets:
 ```javascript
-import { expressRateLimit, presets } from 'limtr';
+import { expressRateLimit, presets } from '@rajatdebnath/limtr';
 
 // Instantly protect a login route from brute force
 app.post('/login', expressRateLimit(presets.login), loginController);
@@ -88,7 +88,7 @@ If you have multiple Node.js instances sitting behind a load balancer, using `Me
 Limtr solves this with a highly optimized `RedisStore` powered by atomic Lua scripts that completely eliminate database race conditions.
 
 ```javascript
-import { expressRateLimit, RedisStore } from 'limtr';
+import { expressRateLimit, RedisStore } from '@rajatdebnath/limtr';
 import { createClient } from 'redis';
 
 const redisClient = createClient({ url: 'redis://localhost:6379' });
