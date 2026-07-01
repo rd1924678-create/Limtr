@@ -65,7 +65,7 @@ describe('RedisStore Integration', () => {
       expect(res.resetTime.getTime()).toBeLessThanOrEqual(start + 1010);
       
       // Verify TTL was actually set in Redis for garbage collection
-      const ttl = await redisClient.pttl('test-limtr:ip2');
+      const ttl = await redisClient.pTTL('test-limtr:ip2');
       expect(ttl).toBeGreaterThan(0);
       expect(ttl).toBeLessThanOrEqual(1000);
     });
