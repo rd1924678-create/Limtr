@@ -1,0 +1,85 @@
+{
+  "name": "limtr",
+  "version": "1.0.0",
+  "description": "An ultra-fast, extensible, framework-agnostic rate limiting engine for Node.js.",
+  "keywords": [
+    "rate-limit",
+    "rate-limiter",
+    "express",
+    "redis",
+    "token-bucket",
+    "fixed-window",
+    "lua"
+  ],
+  "author": "Rajat Debnath",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/your-org/limtr.git"
+  },
+  "type": "module",
+  "main": "./dist/index.cjs",
+  "module": "./dist/index.mjs",
+  "exports": {
+    ".": {
+      "import": "./dist/index.mjs",
+      "require": "./dist/index.cjs"
+    },
+    "./adapters/express": {
+      "import": "./dist/adapters/express/index.mjs",
+      "require": "./dist/adapters/express/index.cjs"
+    },
+    "./stores/memory": {
+      "import": "./dist/stores/memory/index.mjs",
+      "require": "./dist/stores/memory/index.cjs"
+    },
+    "./stores/redis": {
+      "import": "./dist/stores/redis/index.mjs",
+      "require": "./dist/stores/redis/index.cjs"
+    }
+  },
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "prepare": "husky",
+    "build": "tsup src/index.js src/adapters/express.js src/stores/memory/index.js src/stores/redis/index.js --format cjs,esm --clean",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "test:coverage": "vitest run --coverage",
+    "lint": "eslint \"src/**/*.js\"",
+    "format": "prettier --write \"**/*.{js,json,md}\"",
+    "bench": "mitata benchmarks/index.bench.js",
+    "docs": "jsdoc -c jsdoc.json",
+    "prepublishOnly": "npm run build && npm run test && npm run lint"
+  },
+  "dependencies": {},
+  "peerDependencies": {
+    "express": "^4.19.0",
+    "redis": "^4.6.0"
+  },
+  "peerDependenciesMeta": {
+    "express": {
+      "optional": true
+    },
+    "redis": {
+      "optional": true
+    }
+  },
+  "devDependencies": {
+    "eslint": "^9.0.0",
+    "express-rate-limit": "^7.2.0",
+    "husky": "^9.0.11",
+    "jsdoc": "^4.0.2",
+    "lint-staged": "^15.2.2",
+    "mitata": "^0.1.11",
+    "prettier": "^3.2.5",
+    "rate-limiter-flexible": "^5.0.0",
+    "testcontainers": "^10.9.0",
+    "tsup": "^8.0.2",
+    "vitest": "^1.6.0"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "license": "MIT"
+}
