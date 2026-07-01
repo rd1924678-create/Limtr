@@ -1,3 +1,10 @@
+## [1.0.2](https://github.com/rd1924678-create/Limtr/compare/v1.0.1...v1.0.2) (2026-07-01)
+
+### Bug Fixes
+
+- bypass npm 2fa for automation ([786505c](https://github.com/rd1924678-create/Limtr/commit/786505caae60dde4e9821859523ac1db5ede16e2))
+- bypass npm 2fa for automation ([ff10f07](https://github.com/rd1924678-create/Limtr/commit/ff10f0772d03b45978e5ed9ff29d8fa1028ca2a7))
+
 ## [1.0.1](https://github.com/rd1924678-create/Limtr/compare/v1.0.0...v1.0.1) (2026-07-01)
 
 ### Bug Fixes
