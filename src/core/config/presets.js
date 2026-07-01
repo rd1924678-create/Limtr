@@ -1,4 +1,4 @@
-export const Presets = {
+export const presets = {
   STRICT: {
     algorithm: { name: 'fixedWindow', windowMs: 1000, max: 5 }
   },

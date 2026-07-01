@@ -5,47 +5,39 @@ describe('MemoryStore', () => {
   let store;
 
   beforeEach(() => {
-    // Take control of the system clock
     vi.useFakeTimers();
     vi.setSystemTime(new Date('2024-01-01T00:00:00.000Z'));
     
     store = new MemoryStore({
-      maxKeys: 3, // Artificially low ceiling to test LRU Eviction
-      sweepInterval: 1000, // Sweep every 1 second
-      sweepBatchSize: 2 // Check 2 keys per sweep
+      maxKeys: 3, 
+      sweepInterval: 1000,
+      sweepBatchSize: 2 
     });
   });
 
   afterEach(() => {
-    // Crucial: Stop the background sweeper to prevent Vitest from hanging open
     store.stop(); 
     vi.useRealTimers();
   });
 
   it('should store and evaluate buckets atomically using process()', async () => {
-    const evaluator = (state) => ({
-      newBucketState: { count: state ? state.count + 1 : 1 },
-      resetTime: new Date(Date.now() + 5000)
-    });
+    const config = { max: 5, windowMs: 5000 };
 
     // First request
-    await store.process('ip1', evaluator);
-    let bucket = await store.get('ip1');
-    expect(bucket.count).toBe(1);
+    const res1 = await store.process('ip1', 'fixedWindow', config, 1);
+    expect(res1.isAllowed).toBe(true);
+    expect(res1.remaining).toBe(4);
 
     // Second request increments
-    await store.process('ip1', evaluator);
-    bucket = await store.get('ip1');
-    expect(bucket.count).toBe(2);
+    const res2 = await store.process('ip1', 'fixedWindow', config, 1);
+    expect(res2.isAllowed).toBe(true);
+    expect(res2.remaining).toBe(3);
   });
 
   it('should perform Lazy Eviction on get()', async () => {
-    const evaluator = () => ({
-      newBucketState: { count: 1 },
-      resetTime: new Date(Date.now() + 2000) // Expires in 2 seconds
-    });
+    const config = { max: 1, windowMs: 2000 };
 
-    await store.process('ip1', evaluator);
+    await store.process('ip1', 'fixedWindow', config, 1);
     expect(await store.get('ip1')).not.toBeNull();
     
     // Fast-forward 3 seconds (past reset time)
@@ -57,42 +49,33 @@ describe('MemoryStore', () => {
   });
 
   it('should perform Lazy Eviction cleanly inside process()', async () => {
-    const evaluator = (state) => {
-      // If state is null, it acts like a brand new user
-      return {
-        newBucketState: { count: state ? state.count + 1 : 1 },
-        resetTime: new Date(Date.now() + 2000)
-      };
-    };
+    const config = { max: 1, windowMs: 2000 };
 
-    await store.process('ip1', evaluator);
-    expect((await store.get('ip1')).count).toBe(1); // 1 request
+    const res1 = await store.process('ip1', 'fixedWindow', config, 1);
+    expect(res1.remaining).toBe(0); 
     
     // Fast-forward 3 seconds (past reset time)
     vi.advanceTimersByTime(3000);
     
-    // The next process should treat it as a brand new bucket (resetting count to 1)
-    await store.process('ip1', evaluator);
-    expect((await store.get('ip1')).count).toBe(1); 
+    // The next process should treat it as a brand new bucket
+    const res2 = await store.process('ip1', 'fixedWindow', config, 1);
+    expect(res2.remaining).toBe(0); 
   });
 
   it('should execute Hard Ceiling LRU Eviction when exceeding maxKeys', async () => {
-    const evaluator = () => ({
-      newBucketState: { count: 1 },
-      resetTime: new Date(Date.now() + 5000)
-    });
+    const config = { max: 1, windowMs: 5000 };
 
     // maxKeys is configured to 3. Let's insert 3 keys.
-    await store.process('ip1', evaluator);
-    await store.process('ip2', evaluator);
-    await store.process('ip3', evaluator);
+    await store.process('ip1', 'fixedWindow', config, 1);
+    await store.process('ip2', 'fixedWindow', config, 1);
+    await store.process('ip3', 'fixedWindow', config, 1);
     
     expect(store.map.size).toBe(3);
     expect(store.map.has('ip1')).toBe(true);
 
     // Insert 4th key. This exceeds maxKeys (3).
     // Because Maps preserve insertion order, `ip1` is the oldest and must be deleted.
-    await store.process('ip4', evaluator);
+    await store.process('ip4', 'fixedWindow', config, 1);
     
     expect(store.map.size).toBe(3);
     expect(store.map.has('ip1')).toBe(false); // Evicted!
@@ -100,14 +83,11 @@ describe('MemoryStore', () => {
   });
 
   it('should perform Background Batch Sweeping to clean dead keys silently', async () => {
-    const evaluator = (ttlMs) => () => ({
-      newBucketState: { count: 1 },
-      resetTime: new Date(Date.now() + ttlMs)
-    });
+    const config = { max: 1, windowMs: 500 };
 
-    // Insert keys with a very short TTL (500ms)
-    await store.process('ip1', evaluator(500));
-    await store.process('ip2', evaluator(500));
+    // Insert keys with a very short TTL (500ms window)
+    await store.process('ip1', 'fixedWindow', config, 1);
+    await store.process('ip2', 'fixedWindow', config, 1);
     
     expect(store.map.size).toBe(2);
     
@@ -120,12 +100,9 @@ describe('MemoryStore', () => {
   });
 
   it('should correctly reset (delete) keys manually via reset()', async () => {
-    const evaluator = () => ({
-      newBucketState: { count: 1 },
-      resetTime: new Date(Date.now() + 5000)
-    });
+    const config = { max: 1, windowMs: 5000 };
 
-    await store.process('ip1', evaluator);
+    await store.process('ip1', 'fixedWindow', config, 1);
     expect(await store.get('ip1')).not.toBeNull();
     
     await store.reset('ip1'); // Manual clear

@@ -16,6 +16,9 @@
     "type": "git",
     "url": "https://github.com/rd1924678-create/Limtr.git"
   },
+  "publishConfig": {
+    "access": "public"
+  },
   "type": "module",
   "main": "./dist/index.cjs",
   "module": "./dist/index.mjs",
@@ -66,6 +69,8 @@
     }
   },
   "devDependencies": {
+    "@semantic-release/changelog": "^6.0.3",
+    "@semantic-release/git": "^10.0.1",
     "eslint": "^9.0.0",
     "express-rate-limit": "^7.2.0",
     "husky": "^9.0.11",
@@ -74,8 +79,11 @@
     "mitata": "^0.1.11",
     "prettier": "^3.2.5",
     "rate-limiter-flexible": "^5.0.0",
+    "redis": "^4.6.0",
+    "semantic-release": "^23.1.1",
     "testcontainers": "^10.9.0",
     "tsup": "^8.0.2",
+    "typescript": "^5.4.0",
     "vitest": "^1.6.0"
   },
   "engines": {

@@ -152,7 +152,7 @@ export class RedisStore {
     throw new Error(`RedisStore does not support algorithm: ${algorithmName}`);
   }
 
-  async get(key) {
+  async get(_key) {
     throw new Error('Not implemented. Retrieve state atomicity via process() instead.');
   }
 
