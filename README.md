@@ -1,7 +1,7 @@
 # Limtr 🚀
 
 [![NPM Version](https://img.shields.io/npm/v/limtr.svg)](https://www.npmjs.com/package/limtr)
-[![CI Status](https://github.com/your-org/limtr/workflows/CI/badge.svg)](https://github.com/your-org/limtr/actions)
+[![CI Status](https://github.com/rd1924678-create/Limtr/actions/workflows/ci.yml/badge.svg)](https://github.com/rd1924678-create/Limtr/actions)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
 An ultra-fast, highly extensible, framework-agnostic rate limiting engine for Node.js. 
