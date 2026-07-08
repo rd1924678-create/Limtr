@@ -1,9 +1,9 @@
 export const presets = {
   STRICT: {
-    algorithm: { name: 'fixedWindow', windowMs: 1000, max: 5 }
+    algorithm: { name: 'tokenBucket', capacity: 5, refillRate: 5, refillInterval: 1000 }
   },
   API_STANDARD: {
-    algorithm: { name: 'fixedWindow', windowMs: 3600000, max: 1000 }
+    algorithm: { name: 'tokenBucket', capacity: 1000, refillRate: 1000, refillInterval: 3600000 }
   },
   NO_HEADERS: {
     headers: {

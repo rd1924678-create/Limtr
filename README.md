@@ -62,7 +62,7 @@ Limtr exposes an incredibly powerful configuration object.
 | Option | Type | Default | Description |
 |--------|------|---------|-------------|
 | `store` | `Store` | `MemoryStore` | The database layer handling state. |
-| `algorithm` | `Object` | `fixedWindow` | The algorithm used for rate limiting (see below). |
+| `algorithm` | `Object` | `tokenBucket` | The algorithm used for rate limiting (see below). |
 | `keyGenerator` | `Function` | `req.ip` | Returns a unique string identifier for the user. |
 | `failStrategy` | `Object` | `FALLBACK` | Behavior when the Store crashes (`OPEN`, `CLOSED`, `FALLBACK`). |
 | `headers.enabled` | `Boolean` | `true` | Injects standard `X-RateLimit-*` headers into the HTTP response. |

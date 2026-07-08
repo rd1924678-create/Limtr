@@ -2,9 +2,10 @@ import { MemoryStore } from '../../stores/memory/index.js';
 
 export const DEFAULT_CONFIG = {
   algorithm: {
-    name: 'fixedWindow',
-    windowMs: 60000,
-    max: 100
+    name: 'tokenBucket',
+    capacity: 100,
+    refillRate: 100,
+    refillInterval: 60000
   },
   store: new MemoryStore(),
   headers: {
