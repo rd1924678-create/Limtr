@@ -35,7 +35,7 @@ const app = express();
 
 // Set up a global rate limiter (100 requests per 15 minutes)
 const limiter = expressRateLimit({
-  algorithm: { name: 'fixedWindow', max: 100, windowMs: 15 * 60 * 1000 }
+  algorithm: { name: 'tokenBucket', capacity: 100, refillRate: 100, refillInterval: 15 * 60 * 1000 }
 });
 
 app.use(limiter);
@@ -96,7 +96,7 @@ await redisClient.connect();
 
 const limiter = expressRateLimit({
   store: new RedisStore(redisClient, 'limtr:prod:'),
-  algorithm: { name: 'fixedWindow', max: 50, windowMs: 1000 }
+  algorithm: { name: 'tokenBucket', capacity: 50, refillRate: 50, refillInterval: 1000 }
 });
 ```
 
@@ -104,8 +104,8 @@ const limiter = expressRateLimit({
 
 ## 🚀 Production Examples
 
-### Token Bucket (Bursty API Traffic)
-The Fixed Window algorithm is great for basic limits, but the Token Bucket mathematically smooths out "bursts" of traffic, making it ideal for heavy SaaS APIs.
+### Advanced Token Bucket (Bursty API Traffic)
+Limtr defaults to the Token Bucket algorithm, which mathematically smooths out "bursts" of traffic, making it ideal for heavy SaaS APIs. You can easily configure its burst capacity and refill rates:
 
 ```javascript
 const apiLimiter = expressRateLimit({
@@ -123,11 +123,11 @@ You don't need a million middleware instances! Define global limits, and overrid
 
 ```javascript
 const smartLimiter = expressRateLimit({
-  algorithm: { name: 'fixedWindow', max: 100, windowMs: 60000 },
+  algorithm: { name: 'tokenBucket', capacity: 100, refillRate: 100, refillInterval: 60000 },
   routes: [
     {
       pattern: /^\/api\/heavy-query/,
-      algorithm: { name: 'fixedWindow', max: 5, windowMs: 60000 }
+      algorithm: { name: 'tokenBucket', capacity: 5, refillRate: 5, refillInterval: 60000 }
     }
   ]
 });
